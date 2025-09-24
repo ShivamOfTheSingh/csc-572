@@ -1,0 +1,32 @@
+{
+    "configurations": [
+        {
+            "name": "macos-clang-x64",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/usr/local/include"
+            ],
+            "defines": [],
+            "macFrameworkPath": [
+                "/System/Library/Frameworks",
+                "/Library/Frameworks"
+            ],
+            "compilerPath": "/usr/bin/clang++",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "macos-clang-x64",
+            "compilerArgs": [
+                "-lglfw",
+                "-framework",
+                "OpenGL",
+                "-framework",
+                "Cocoa",
+                "-framework",
+                "IOKit",
+                "-framework",
+                "CoreVideo"
+            ]
+        }
+    ],
+    "version": 4
+}
