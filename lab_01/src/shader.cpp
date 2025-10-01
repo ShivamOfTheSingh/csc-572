@@ -1,21 +1,19 @@
 #include "shader.h"
 
-using namespace std;
-
 Shader::Shader(const char *vertex_path, const char *fragment_path)
 {
     // 1. Read vertex shader code
-    ifstream vertex_file(vertex_path);
-    stringstream vertex_stream;
+    std::ifstream vertex_file(vertex_path);
+    std::stringstream vertex_stream;
     vertex_stream << vertex_file.rdbuf();
-    string vertex_code = vertex_stream.str();
+    std::string vertex_code = vertex_stream.str();
     const char *vertex_shader_str = vertex_code.c_str();
 
     // 2. Read fragment shader code
-    ifstream fragment_file(fragment_path);
-    stringstream fragment_stream;
+    std::ifstream fragment_file(fragment_path);
+    std::stringstream fragment_stream;
     fragment_stream << fragment_file.rdbuf();
-    string fragment_code = fragment_stream.str();
+    std::string fragment_code = fragment_stream.str();
     const char *fragment_shader_str = fragment_code.c_str();
 
     // 3. Compile vertex shader
@@ -30,8 +28,8 @@ Shader::Shader(const char *vertex_path, const char *fragment_path)
     if (!success)
     {
         glGetShaderInfoLog(vertex, 512, nullptr, infoLog);
-        cerr << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n"
-             << infoLog << endl;
+        std::cerr << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n"
+                  << infoLog << std::endl;
     }
 
     // 4. Compile fragment shader
@@ -44,8 +42,8 @@ Shader::Shader(const char *vertex_path, const char *fragment_path)
     if (!success)
     {
         glGetShaderInfoLog(fragment, 512, nullptr, infoLog);
-        cerr << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n"
-             << infoLog << endl;
+        std::cerr << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n"
+                  << infoLog << std::endl;
     }
 
     // 5. Link shaders
@@ -59,31 +57,40 @@ Shader::Shader(const char *vertex_path, const char *fragment_path)
     if (!success)
     {
         glGetProgramInfoLog(ID, 512, nullptr, infoLog);
-        cerr << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n"
-             << infoLog << endl;
+        std::cerr << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n"
+                  << infoLog << std::endl;
     }
 
-    // 6. Delete shaders (no longer needed after linking)
+    // 6. Delete shaders after linking
     glDeleteShader(vertex);
     glDeleteShader(fragment);
 }
 
-void Shader::use()
+void Shader::use() const
 {
     glUseProgram(ID);
 }
 
-void Shader::setBool(const string &name, bool value) const
+void Shader::setBool(const std::string &name, bool value) const
 {
-    glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
+    glUniform1i(glGetUniformLocation(ID, name.c_str()), static_cast<int>(value));
 }
 
-void Shader::setInt(const string &name, int value) const
+void Shader::setInt(const std::string &name, int value) const
 {
     glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
 }
 
-void Shader::setFloat(const string &name, float value) const
+void Shader::setFloat(const std::string &name, float value) const
 {
     glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
+}
+
+void Shader::setMat4(const std::string &name, const glm::mat4 &mat) const
+{
+    glUniformMatrix4fv(
+        glGetUniformLocation(ID, name.c_str()),
+        1,
+        GL_FALSE,
+        glm::value_ptr(mat));
 }
